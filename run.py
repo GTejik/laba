@@ -20,4 +20,9 @@ def check_string(message):
 def right_gramma(message):
 	bot.send_message(message.chat.id, main.rightGramma(main.read_matrix()))
 
+@bot.message_handler(commands = ['getMatrix'])
+def show_matrix(message):
+	f = open('input.txt', 'r')
+	bot.send_message(message.chat.id, f.read())
+
 bot.polling()
