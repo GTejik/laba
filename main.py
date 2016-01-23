@@ -1,10 +1,8 @@
 def read_matrix():
 	#read matrix
 	matrix = {}
-
 	#reading
 	f = open('input.txt', 'r')
-
 	#set of chars
 	matrix['chars'] = f.readline().replace(' ', '')
 	#first state
@@ -17,9 +15,7 @@ def read_matrix():
 		#remember first state
 		if not matrix['fstate']:
 			matrix['fstate'] = a[0]
-
 	f.close()
-
 	return matrix
 
 #function to check string according to matrix
@@ -51,7 +47,3 @@ def rightGramma(matrix):
 			result += 'eps'
 		result += '\n'
 	return result
-
-#print(rightGramma(read_matrix()))
-#print('Input string to check')
-#print(check(input(), read_matrix()))

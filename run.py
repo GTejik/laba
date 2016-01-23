@@ -48,4 +48,5 @@ def send_help(message):
 def check_string(message):
 	string = message.text[message.text.find(' ') + 1:]
 	bot.send_message(message.chat.id, main.check(string, main.read_matrix()))
+
 bot.polling()
