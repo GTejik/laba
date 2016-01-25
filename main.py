@@ -43,7 +43,8 @@ def rightGramma(matrix):
 		result += key + '::='
 		for i in range(len(chars) - 1):
 			result += chars[i] + matrix[key][i] + '|'
+		result = result[:-1]
 		if matrix[key][-1] == '1':
-			result += 'eps'
+			result += '|eps'
 		result += '\n'
 	return result
