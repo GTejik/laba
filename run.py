@@ -4,6 +4,9 @@ import main
 TOKEN = '126422692:AAH6cZnU66YKPa8cFtqQmsw6kuIn_Nm9t74'
 bot = telebot.TeleBot(TOKEN, True)
 
+@bot.message_handler(commands = ['start'])
+def send_start(message):
+	bot.send_message(message.chat.id, 'бот для сдачи лабораторных работ\nсписок команд смотри, введя \'/\'')
 @bot.message_handler(commands = ['set_matrix'])
 def set_matrix(message):
 	if message.text.find(' ') == -1:
