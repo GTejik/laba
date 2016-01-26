@@ -7,6 +7,7 @@ bot = telebot.TeleBot(TOKEN, True)
 @bot.message_handler(commands = ['start'])
 def send_start(message):
 	bot.send_message(message.chat.id, 'бот для сдачи лабораторных работ\nсписок команд смотри, введя \'/\'')
+	
 @bot.message_handler(commands = ['set_matrix'])
 def set_matrix(message):
 	if message.text.find(' ') == -1:
@@ -40,8 +41,8 @@ def set_matrix_laba2_2(message):
 @bot.message_handler(commands = ['laba1_3'])
 def set_matrix_laba2_2(message):
 	f = open('input.txt', 'w')
-	f.write('0 1 2 3 4 5 6 7 8 9 + - * / = ,\na d b b b b b b b b b e f e e e e 0\nb b b b b b b b b b b c c c c e a 0\nc g h h h h h h h h h e e e e e a 0\nd e e e e e e e e e e c c c c e a 0\nf e b b b b b b b b b c c c c e a 0\nh h h h h h h h h h h c c c c e a 1\ng g e e e e e e e e e c c c c e a 1\ne e e e e e e e e e e e e e e e a 0');
-	bot.send_message(message.chat.id, 'цепочка состоит из арифметических выражений и не содержит скобок, матрица:\n0 1 2 3 4 5 6 7 8 9 + - * / = ,\na d b b b b b b b b b e f e e e e 0\nb b b b b b b b b b b c c c c e a 0\nc g h h h h h h h h h e e e e e a 0\nd e e e e e e e e e e c c c c e a 0\nf e b b b b b b b b b c c c c e a 0\nh h h h h h h h h h h c c c c e a 1\ng g e e e e e e e e e c c c c e a 1\ne e e e e e e e e e e e e e e e a 0\n\na - начальное состояние\nb - только цифры\nc - арифметический знак встретили\nd - ноль (не может быть в начале) \nf - минус (не может быть -0, но -3 ок)\nh - не только цифры, есть выражения\ng - не только ноль, есть выражения\ne - ошибка\n')
+	f.write('0 1 2 3 4 5 6 7 8 9 + - * / = ,\na d b b b b b b b b b e f e e e e 0\nb b b b b b b b b b b c c c c = a 0\nc g h h h h h h h h h e e e e e a 0\nd e e e e e e e e e e c c c c c a 0\nf e b b b b b b b b b c c c c c a 0\nh h h h h h h h h h h c c c c c a 1\ng g e e e e e e e e e c c c c c a 1\ne e e e e e e e e e e e e e e e a 0');
+	bot.send_message(message.chat.id, 'цепочка состоит из арифметических выражений и не содержит скобок, матрица:\n0 1 2 3 4 5 6 7 8 9 + - * / = ,\na d b b b b b b b b b e f e e e e 0\nb b b b b b b b b b b c c c c = a 0\nc g h h h h h h h h h e e e e e a 0\nd e e e e e e e e e e c c c c c a 0\nf e b b b b b b b b b c c c c c a 0\nh h h h h h h h h h h c c c c c a 1\ng g e e e e e e e e e c c c c c a 1\ne e e e e e e e e e e e e e e e a 0\n\na - начальное состояние\nb - только цифры\nc - арифметический знак встретили\nd - ноль (не может быть в начале) \nf - минус (не может быть -0, но -3 ок)\nh - не только цифры, есть выражения\ng - не только ноль, есть выражения\ne - ошибка\n')
 
 @bot.message_handler(commands = ['help'])
 def send_help(message):
