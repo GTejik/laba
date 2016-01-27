@@ -23,13 +23,7 @@ def simplify(regexp, chars):
 
 def regexp_to_nka(regexp):
 	chars = []
-
 	simplify(regexp, chars)
-
-	matrix = {}
-	matrix['s'] = ['0']
-	matrix['e'] = ['0']
-	matrix['z'] = ['1']
 
 	print(chars)
 
@@ -166,17 +160,17 @@ def check(string, matrix):
 			write_matrix(matrix)
 			return dka(string, matrix)
 
-		for row in matrix.values():
+		for key, row in matrix.items():
 			for s in row:
-				if ',' in s:
+				if ',' in s and key != 'chars':
 					matrix = nka_to_dka(matrix)
 					write_matrix(matrix)
 					return dka(string, matrix)
+		#if it is determinate
+		return dka(string, matrix)
+
 	except:
 		return 'Не могу проверить на детерминированность, убедитесь в правильности ввода матрицы\n\n' + rules
-
-	#if it is determinate
-	return dka(string, matrix)
 
 #get right gramma
 def rightGramma(matrix):

@@ -14,7 +14,7 @@ def set_matrix(message):
 	if message.text.find(' ') == -1:
 		bot.send_message(message.chat.id, 'пустой аргумент')
 		return
-	matrix = message.text[message.text.find(' ') + 1:]
+	matrix = message.text[message.text.find(' ') + 1:].strip()
 	f = open('input.txt', 'w')
 	if len(matrix):
 		f.write(matrix)
@@ -51,14 +51,14 @@ def send_choice(message):
 	markup.row('Недетерминированная', 'Регулярное выражение')
 	bot.send_message(message.chat.id, 'Выберите задание:', reply_markup = markup)
 
-@bot.message_handler(regexp = 'Задание 1')
+@bot.message_handler(regexp = 'Задание 1_2')
 def set_matrix_laba2_1(message): 
 	markup = types.ReplyKeyboardHide(selective = False)
 	f = open('input.txt', 'w')
 	f.write('0 1\n-A A B 0\nB B B 1');
 	bot.send_message(message.chat.id, 'проверить, что в последовательности имеется по крайней мере одна \'1\', матрица:\n0 1\n-A A B 0\nB B B 1', reply_markup=markup)
 
-@bot.message_handler(regexp = 'Задание 2')
+@bot.message_handler(regexp = 'Задание 1_3')
 def set_matrix_laba2_2(message):
 	markup = types.ReplyKeyboardHide(selective = False)
 	f = open('input.txt', 'w')
