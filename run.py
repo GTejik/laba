@@ -83,7 +83,7 @@ def set_l_regexp(message):
 
 @bot.message_handler(commands = ['help'])
 def send_help(message):
-	bot.send_message(message.chat.id, 'Галайко Никита Сергеевич\nБИВ135\nВариант 6')
+	bot.send_message(message.chat.id, 'Галайко Никита Сергеевич\nБИВ135\nВариант 6\nИсходные коды доступны по ссылке: github.com/ngalayko/laba')
 
 @bot.message_handler(func=lambda m: True)
 def check_string(message):
