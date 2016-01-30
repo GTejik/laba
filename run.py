@@ -75,7 +75,7 @@ def set_nd_matrix(message):
 @bot.message_handler(regexp = 'Регулярное выражение')
 def set_l_regexp(message):
 	markup = types.ReplyKeyboardHide(selective = False)
-	regexp = '1+|1*01(11|a)+'
+	regexp = '1+|1*01(11|01)+'
 
 	bot.send_message(message.chat.id, 'Установлено: '+ regexp, reply_markup=markup)
 

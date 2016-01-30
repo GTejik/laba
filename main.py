@@ -1,7 +1,6 @@
 rules = 'Правила для ввода:\nПервая строка - алфавит\nДалее строки состояний в виде:\nсостояние-переходы-финальное?(1 или 0)\nПереходы разделяются пробелами\nЕсли переходов из одного состояния несколько, они разделяются запятой\nНачальное состояние помечается \'-\' в начале строки'
 
 def simplify(regexp, chars):
-	#print(regexp, chars)
 	flag = False
 	for c in regexp:		
 		if chars == [] or c == '|' and not flag:
@@ -21,9 +20,111 @@ def simplify(regexp, chars):
 		else:
 			chars[-1].append(c)
 
+def chars_to_matrix(chars, matrix, states, fstate, estate):
+	try:
+		freestate = int(states[-1]) + 1
+	except:
+		freestate = 0
+
+	print(chars)
+
+	oldstate = None
+	state = fstate
+
+	for char in chars:
+		for i, term in enumerate(char):
+			#if we need to loop
+			repet = False
+			#state for loop
+			rstate = None
+			if term[-1] == '*':#'*' in term:# and '|' not in term:
+				repet = True
+				oldstate = state
+				rstate = state
+				if i == len(char) - 1:
+					states[states.index(state)] = 'z' + state
+					estate = 'z' + state
+					rstate = estate
+				#matrix[states.index(state)][states.index(state)] += term.replace('*', '').replace('(', '').replace(')', '')
+				#rstate = state
+			else:
+				if term[-1] == '+':#'+' in term:# and '|' not in term:
+					repet = True
+					#rstate = state
+					#matrix[states.index(state)][states.index(state)] += term.replace('+', '').replace('(', '').replace(')', '')
+				if i == len(char) - 1:
+					print('TEST LAST', term, 'from', state, 'to', estate)
+					#fill pass
+					if '(' not in term and '+' not in term and '*' not in term and '|' not in term:
+						matrix[states.index(state)][states.index(estate)] += term.replace('+', '').replace('(', '').replace(')', '')
+					print(matrix[states.index(state)][states.index(estate)])
+					oldstate = state
+					state = fstate
+					if repet:
+						rstate = estate
+				else:
+					print('TEST MIDDLE', term, 'from', state, 'to', str(freestate))
+					#new state
+					states.append(str(freestate))
+					#extend rows
+					for row in matrix:
+						row.append('')
+					#new row
+					matrix.append([''] * len(states))
+					#fill pass
+					if '(' not in term and '+' not in term and '*' not in term and '|' not in term:
+						matrix[states.index(state)][states.index(str(freestate))] += term.replace('+', '').replace('(', '').replace(')', '')
+					oldstate = state
+					state = str(freestate)
+					freestate += 1
+					if repet:
+						rstate = state
+			if repet:
+				print('TEST REPEAT', term, 'from', rstate, 'to', rstate)
+				if '(' not in term and '+' not in term and '*' not in term and '|' not in term:
+					matrix[states.index(rstate)][states.index(rstate)] += term.replace('+', '').replace('*', '').replace('(', '').replace(')', '')
+			#print("test", term, oldstate, state, estate)
+
+			print('TERM', term, 'from', oldstate, 'to', state, repet)
+
+			if '(' in term or '|' in term:
+				#simplify regexp
+				x = []
+				#simplify(term.replace('+', '').replace('*', '').replace('(', '').replace(')', ''), x)
+				simplify(term[:-1].replace('(', '').replace(')', ''), x)
+				print('test HERE', term, 'from', oldstate, 'to', state, repet)
+				if oldstate != state or not repet:
+					if i == len(char) - 1:
+						print('test LAST', term, 'from', oldstate, 'to', 'z')
+						#matrix[states.index(oldstate)][states.index(estate)] = ''
+						#oldstate, state, estate = 
+						chars_to_matrix(x, matrix, states, oldstate, estate)
+					else:
+						print('test MIDDLE', term, 'from', oldstate, 'to', state)
+						#matrix[states.index(oldstate)][states.index(state)] = ''
+						#oldstate, state, estate = 
+						chars_to_matrix(x, matrix, states, oldstate, state)
+				#if loop
+				if repet:
+					print('test REPET', term, 'from', rstate, 'to', rstate)
+					#print(matrix[states.index(rstate)][states.index(rstate)])
+					#matrix[states.index(rstate)][states.index(rstate)] = ''
+					#print(oldstate, rstate)
+					#oldstate, state, estate = 
+					chars_to_matrix(x, matrix, states, rstate, rstate)
+
 def regexp_to_nka(regexp):
 	chars = []
+	
 	simplify(regexp, chars)
+	states = ['s', 'z']
+	matrix = [['', ''], ['', '']]
+
+	chars_to_matrix(chars, matrix, states, 's', 'z')
+
+	print(states)
+	for i, row in enumerate(matrix):
+		print(i - 2, ': ', '|--|'.join(str(x) for x in row))
 
 	print(chars)
 
