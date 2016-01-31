@@ -40,9 +40,11 @@ def set_regexp(message):
 		return
 	regexp = message.text[message.text.find(' ') + 1:]
 
-	main.regexp_to_nka(regexp)
+	f = open('input.txt', 'r')
 
-	bot.send_message(message.chat.id, regexp)
+	main.write_matrix(main.regexp_to_nka(regexp))
+
+	bot.send_message(message.chat.id, 'Установлено: '+ regexp + '\n\nПреобразовано к НКА следующего вида:\n' + f.read())
 
 @bot.message_handler(commands = ['laba'])
 def send_choice(message):
@@ -54,32 +56,37 @@ def send_choice(message):
 @bot.message_handler(regexp = 'Задание 1_2')
 def set_matrix_laba2_1(message): 
 	markup = types.ReplyKeyboardHide(selective = False)
+	matrix = '0 1\n-A A B 0\nB B B 1'
 	f = open('input.txt', 'w')
-	f.write('0 1\n-A A B 0\nB B B 1');
-	bot.send_message(message.chat.id, 'проверить, что в последовательности имеется по крайней мере одна \'1\', матрица:\n0 1\n-A A B 0\nB B B 1', reply_markup=markup)
+	f.write(matrix);
+	bot.send_message(message.chat.id, 'проверить, что в последовательности имеется по крайней мере одна \'1\', матрица:\n' + matrix, reply_markup=markup)
 
 @bot.message_handler(regexp = 'Задание 1_3')
 def set_matrix_laba2_2(message):
 	markup = types.ReplyKeyboardHide(selective = False)
+	matrix = '0 1 2 3 4 5 6 7 8 9 + - * / = ,\n-a d b b b b b b b b b e f e e e e 0\nb b b b b b b b b b b c c c c c a 0\nc g h h h h h h h h h e e e e e a 0\nd e e e e e e e e e e c c c c c a 0\nf e b b b b b b b b b c c c c c a 0\nh h h h h h h h h h h c c c c c a 1\ng e e e e e e e e e e c c c c c a 1\ne e e e e e e e e e e e e e e e a 0'
 	f = open('input.txt', 'w')
-	f.write('0 1 2 3 4 5 6 7 8 9 + - * / = ,\n-a d b b b b b b b b b e f e e e e 0\nb b b b b b b b b b b c c c c c a 0\nc g h h h h h h h h h e e e e e a 0\nd e e e e e e e e e e c c c c c a 0\nf e b b b b b b b b b c c c c c a 0\nh h h h h h h h h h h c c c c c a 1\ng e e e e e e e e e e c c c c c a 1\ne e e e e e e e e e e e e e e e a 0');
-	bot.send_message(message.chat.id, 'цепочка состоит из арифметических выражений и не содержит скобок, матрица:\n0 1 2 3 4 5 6 7 8 9 + - * / = ,\n-a d b b b b b b b b b e f e e e e 0\nb b b b b b b b b b b c c c c c a 0\nc g h h h h h h h h h e e e e e a 0\nd e e e e e e e e e e c c c c c a 0\nf e b b b b b b b b b c c c c c a 0\nh h h h h h h h h h h c c c c c a 1\ng e e e e e e e e e e c c c c c a 1\ne e e e e e e e e e e e e e e e a 0\n\na - начальное состояние\nb - только цифры\nc - арифметический знак встретили\nd - ноль (не может быть в начале) \nf - минус (не может быть -0, но -3 ок)\nh - не только цифры, есть выражения\ng - не только ноль, есть выражения\ne - ошибка\n', reply_markup=markup)
+	f.write(matrix);
+	bot.send_message(message.chat.id, 'цепочка состоит из арифметических выражений и не содержит скобок, матрица:\n' + matrix + '\n\na - начальное состояние\nb - только цифры\nc - арифметический знак встретили\nd - ноль (не может быть в начале) \nf - минус (не может быть -0, но -3 ок)\nh - не только цифры, есть выражения\ng - не только ноль, есть выражения\ne - ошибка\n', reply_markup=markup)
 
 @bot.message_handler(regexp = 'Недетерминированная')
 def set_nd_matrix(message):
 	markup = types.ReplyKeyboardHide(selective = False)
+	matrix = '0 1\n-a a,b c 0\n-b e c 1\nc e a,c 1\ne e e 0'
 	f = open('input.txt', 'w')
-	f.write('0 1\n-a a,b c 0\n-b e c 1\nc e a,c 1\ne e e 0');
-	bot.send_message(message.chat.id, 'матрица:\n0 1\n-a a,b c 0\n-b e c 1\nc e a,c 1\ne e e 0', reply_markup=markup)
+	f.write(matrix);
+	bot.send_message(message.chat.id, 'матрица:\n' + matrix, reply_markup=markup)
 
 @bot.message_handler(regexp = 'Регулярное выражение')
 def set_l_regexp(message):
 	markup = types.ReplyKeyboardHide(selective = False)
 	regexp = '1+|1*01(11|01)+'
 
-	bot.send_message(message.chat.id, 'Установлено: '+ regexp, reply_markup=markup)
+	main.write_matrix(main.regexp_to_nka(regexp))
 
-	main.regexp_to_nka(regexp)
+	f = open('input.txt', 'r')
+
+	bot.send_message(message.chat.id, 'Установлено: '+ regexp + '\n\nПреобразовано к НКА следующего вида:\n' + f.read(), reply_markup=markup)
 
 @bot.message_handler(commands = ['help'])
 def send_help(message):
@@ -88,6 +95,7 @@ def send_help(message):
 @bot.message_handler(func=lambda m: True)
 def check_string(message):
 	string = message.text[message.text.find(' ') + 1:]
+	f = open('input.txt', 'r')
 	bot.send_message(message.chat.id, main.check(string, main.read_matrix()))
 
 bot.polling()
