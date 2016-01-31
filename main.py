@@ -59,23 +59,23 @@ def chars_to_matrix(chars, matrix, states, fstate, estate):
         #nchars[-1][-1] = nchars[-1][-1][:-1] + nchars[-1][-1][-1:].replace('|', ')+')  
         #chars = nchars  
         #print('nchars', nchars)
-        if nallstar == nallterm:
-            print('ALL ******************************')
+        #if nallstar == nallterm:
+        #    print('ALL ******************************')
         #if nallterm == nalliter:
         #    print('yes', nalliter, nallterm)
 
-        print(chars)
+        #print(chars)
 
         oldstate = None
         state = fstate
 
         for char in chars:
-            print('char', char, chars)
+            #print('char', char, chars)
             for i, term in enumerate(char):
                 #if all terminals with '*' => make it possible to get to the end by any char
                 if nallstar == nallterm:
                      matrix[states.index(state)][states.index(estate)] += term.replace('+', '').replace('*', '').replace('(', '').replace(')', '')
-                print('term', term, char)
+                #print('term', term, char)
                 #if we need to loop
                 repet = False
                 #state for loop
@@ -120,10 +120,10 @@ def chars_to_matrix(chars, matrix, states, fstate, estate):
                         freestate += 1
                         if repet:
                             rstate = state
-                print('TEST', term, i, chars, nallterm, nalliter)
+                #print('TEST', term, i, chars, nallterm, nalliter)
                 if repet:
                     if nallterm == nalliter and len(chars) != 1 or term[-1] == '*' and i == len(char) - 1:
-                        print('popal', term, nalliter, nallterm, chars)
+                        #print('popal', term, nalliter, nallterm, chars)
                         #new state
                         states.append('z' + str(freestate))
                         #extend rows
@@ -315,7 +315,7 @@ def nka_to_dka(matrix):
                 queue.remove(states)
             #adding new states to queue
             for next_state in result[states]:
-                print('                          ', next_state)
+                #print('                          ', next_state)
                 #if '1' in states and we have new state '1z' => add '1' to states // make '1' = '1z'
                 #if next_state[:-1] in values:
                 #    result[next_state[:-1]] = []
