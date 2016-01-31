@@ -211,7 +211,7 @@ def matrix_to_nka(matrix, states):
 
         return result
     except:
-        #ass
+        pass
 
 def regexp_to_nka(regexp):
     try:
