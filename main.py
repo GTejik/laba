@@ -1,177 +1,5 @@
 rules = 'Правила для ввода:\nПервая строка - алфавит\nДалее строки состояний в виде:\nсостояние-переходы-финальное?(1 или 0)\nПереходы разделяются пробелами\nЕсли переходов из одного состояния несколько, они разделяются запятой\nНачальное состояние помечается \'-\' в начале строки'
 
-def simplify(regexp, chars):
-    try:
-        flag = False
-        for c in regexp:        
-            if chars == [] or c == '|' and not flag:
-                chars.append([])
-            if c == '|' and not flag:
-                continue
-            if c == '(' and not flag:
-                chars[-1].append(c)
-                flag = True
-            elif c == ')' and flag:
-                chars[-1][-1] += c
-                flag = False
-            elif flag:
-                chars[-1][-1] += c
-            elif c == '+' or c == '*':
-                chars[-1][-1] += c
-            else:
-                chars[-1].append(c)
-    except:
-        pass
-
-def chars_to_matrix(chars, matrix, states, fstate, estate):
-    try:
-        try:
-            freestate = int(states[-1].replace('z', '')) + 1
-        except:
-            freestate = 0
-
-        #to remember where we should stop for a+|b+ case
-        endstates = []
-        nchars = [['(']]
-
-        nallterm = 0
-        nalliter = 0
-        nallstar = 0
-        for char in chars:
-            nterm = 0
-            nstar = 0
-            for term in char:
-                nterm += 1
-                nallterm += 1
-                if term[-1] == '*':
-                    nstar += 1
-                    nallstar += 1
-                if term[-1] == '*' or term[-1] == '+':
-                    nalliter += 1
-            #if all are '*' => change it to '+'
-            #if nterm == nstar:
-               # for char in chars:
-                    #for term in char:
-                       # nchars[-1][-1] += term[:-1] + '|'
-                        #print(term, 'asd', nchars)
-                       #chars[chars.index(char)][char.index(term)] = term.replace('*', '+')
-        
-        #nchars[-1][-1] = nchars[-1][-1][:-1] + nchars[-1][-1][-1:].replace('|', ')+')  
-        #chars = nchars  
-        #print('nchars', nchars)
-        #if nallstar == nallterm:
-        #    print('ALL ******************************')
-        #if nallterm == nalliter:
-        #    print('yes', nalliter, nallterm)
-
-        #print(chars)
-
-        oldstate = None
-        state = fstate
-
-        for char in chars:
-            #print('char', char, chars)
-            for i, term in enumerate(char):
-                #if all terminals with '*' => make it possible to get to the end by any char
-                if nallstar == nallterm:
-                     matrix[states.index(state)][states.index(estate)] += term.replace('+', '').replace('*', '').replace('(', '').replace(')', '')
-                #print('term', term, char)
-                #if we need to loop
-                repet = False
-                #state for loop
-                rstate = None
-                if term[-1] == '*':
-                    repet = True
-                    oldstate = state
-                    rstate = state
-                    if i == len(char) - 1 and 'z' not in state and state != 's':
-                        states[states.index(state)] = 'z' + state
-                        estate = 'z' + state
-                        rstate = estate
-                        state = 'z' + state
-                else:
-                    if term[-1] == '+':
-                        repet = True
-                    if i == len(char) - 1:
-                        if estate.replace('z', '') == state:
-                            state = estate
-                        if estate.replace('z', '') == fstate: 
-                            fstate = estate
-                        #fill pass
-                        if '(' not in term and '+' not in term and '*' not in term and '|' not in term or len(term) == 2:
-                            matrix[states.index(state)][states.index(estate)] += term.replace('+', '').replace('(', '').replace(')', '')
-                        oldstate = state
-                        state = fstate
-                        if repet:
-                            rstate = estate
-                    else:
-                        #new state
-                        states.append(str(freestate))
-                        #extend rows
-                        for row in matrix:
-                            row.append('')
-                        #new row
-                        matrix.append([''] * len(states))
-                        #fill pass
-                        if '(' not in term and '+' not in term and '*' not in term and '|' not in term or len(term) == 2:
-                            matrix[states.index(state)][states.index(str(freestate))] += term.replace('+', '').replace('(', '').replace(')', '')
-                        oldstate = state
-                        state = str(freestate)
-                        freestate += 1
-                        if repet:
-                            rstate = state
-                #print('TEST', term, i, chars, nallterm, nalliter)
-                if repet:
-                    if nallterm == nalliter and len(chars) != 1 or term[-1] == '*' and i == len(char) - 1:
-                        #print('popal', term, nalliter, nallterm, chars)
-                        #new state
-                        states.append('z' + str(freestate))
-                        #extend rows
-                        for row in matrix:
-                            row.append('')
-                        #new row
-                        matrix.append([''] * len(states))
-                        #fill pass
-                        #if term[-1] == '+':
-                        matrix[states.index(state)][states.index('z' + str(freestate))] = term.replace('+', '').replace('*', '').replace('(', '').replace(')', '')
-                        matrix[states.index('z' + str(freestate))][states.index('z' + str(freestate))] = term.replace('+', '').replace('*', '').replace('(', '').replace(')', '') 
-      
-                        oldstate = state
-                        #state = 'z' + str(freestate)
-                        freestate += 1
-
-                        endstates.append(state)
-                    else:
-                        if rstate == 's' and len(term) == 2 and i == len(char) - 1:
-                            matrix[states.index(state)][states.index(estate)] += term.replace('*', '').replace('+', '').replace('(', '').replace(')', '')
-                        if '(' not in term and '+' not in term and '*' not in term and '|' not in term or len(term) == 2:
-                            matrix[states.index(rstate)][states.index(rstate)] += term.replace('+', '').replace('*', '').replace('(', '').replace(')', '')
-                
-                #now we don't need anything from z0, z1 etc. lead to z
-                if nallterm == nalliter and len(chars) != 1:
-                    for state in endstates:
-                        for i, row in enumerate(matrix):
-                            if i == states.index(state):
-                                matrix[i][1] = ''
-
-                if '(' in term or '|' in term:
-                    #simplify regexp
-                    x = []
-                    simplify(term[:-1].replace('(', '').replace(')', ''), x)
-                    if oldstate.replace('z', '') != state.replace('z', '') or not repet:
-                        if i == len(char) - 1:
-                            chars_to_matrix(x, matrix, states, oldstate, estate)
-                        else:
-                            chars_to_matrix(x, matrix, states, oldstate, state)
-                    #if loop
-                    if repet:
-                        if rstate == 's' and i == len(char) - 1:
-                            chars_to_matrix(x, matrix, states, rstate, estate)
-                        chars_to_matrix(x, matrix, states, rstate, rstate)
-
-    except:
-        pass
-
 def matrix_to_nka(matrix, states):
     try:
         result = {}
@@ -213,19 +41,64 @@ def matrix_to_nka(matrix, states):
     except:
         pass
 
+#split by '|' outside of () // 'a|b' -> ['a', 'b']
+def split_by_or(regexp):
+    result = []
+    #if no '|' -> done
+    if regexp.find('|') == -1:
+        return [regexp]
+    #number of opened '(' if it is equals 0 -> we are outside of () now
+    n = 0
+    #position of '|' outside ()
+    pos = 0
+    for c in regexp:
+        if n == 0 and c == '|':
+            #appending result
+            result.append(regexp[: pos])
+            #deleting done string
+            regexp = regexp[pos + 1 :]
+            #now pos == 0
+            pos = 0
+        else:
+            #counting ()
+            if c == '(':
+                n += 1
+            elif c == ')':
+                n -= 1
+            pos += 1
+    #appending result with rest
+    result.append(regexp)
+    return result
+
+#split regexp by 'and' // 'a*b' -> ['a*', 'b'] 
+def split_by_and(regexp):
+    result = []
+    #number of opened '(' if it is equals 0 -> we are outside of () now
+    n = 0
+    #position of the beggining of the part to add to result
+    pos = 0
+    for i, c in enumerate(regexp):  
+        print('before', c, regexp, i, pos, result)
+        #counting ()
+        if c == '(':
+            n += 1
+        elif c == ')':
+            n -= 1
+        if c == '*' or c == '+' and n == 0:
+            result[-1] += c
+            pos = i + 1
+            continue
+        if n == 0:
+            #appending result
+            result.append(regexp[pos: i + 1])
+            pos = i + 1
+        print('after', c, regexp, i, pos, result)
+    return result
+
 def regexp_to_nka(regexp):
-    try:
-        chars = []
-        
-        simplify(regexp, chars)
-        states = ['s', 'z']
-        matrix = [['', ''], ['', '']]
 
-        chars_to_matrix(chars, matrix, states, 's', 'z')
-
-        return matrix_to_nka(matrix, states)
-    except:
-        pass
+    print(split_by_and(regexp))
+    
 
 #read matrix from input.txt
 def read_matrix():
